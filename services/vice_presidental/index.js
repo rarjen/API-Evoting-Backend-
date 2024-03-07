@@ -1,11 +1,7 @@
-const {
-  Vice_presidental,
-  Presidental_candidate,
-  Political_party,
-} = require("../../models");
+const { Vice_presidental_candidate, Political_party } = require("../../models");
 const ApiError = require("../../helpers/errorHandler");
 
-const create = async (req) => {
+const createData = async (req) => {
   const partyExist = await Political_party.findOne({
     where: { id: req.body.political_party_id },
   });
@@ -14,26 +10,14 @@ const create = async (req) => {
     throw ApiError.notFound("Data partai tidak ada!");
   }
 
-  const presidentalExist = await Presidental_candidate.findOne({
-    where: { id: req.body.presidental_partner_id },
-  });
-
-  if (!presidentalExist) {
-    throw ApiError.notFound("Data presiden tidak ada!");
-  }
-
-  const result = await Vice_presidental.create(req.body);
-
+  const result = await Vice_presidental_candidate.create(req.body);
   return result;
 };
 
 const getOne = async (req) => {
-  const result = await Vice_presidental.findOne({
+  const result = await Vice_presidental_candidate.findOne({
     where: { id: req.params.id },
-    include: [
-      { model: Political_party, as: "political_party" },
-      { model: Presidental_candidate, as: "presidental" },
-    ],
+    include: { model: Political_party, as: "political_party" },
   });
 
   if (!result) {
@@ -44,11 +28,8 @@ const getOne = async (req) => {
 };
 
 const getAll = async (req) => {
-  const result = await Vice_presidental.findAll({
-    include: [
-      { model: Political_party, as: "political_party" },
-      { model: Presidental_candidate, as: "presidental" },
-    ],
+  const result = await Vice_presidental_candidate.findAll({
+    include: { model: Political_party, as: "political_party" },
   });
 
   return result;
@@ -57,7 +38,7 @@ const getAll = async (req) => {
 const update = async (req) => {
   await getOne(req);
 
-  const result = await Vice_presidental.update(req.body, {
+  const result = await Vice_presidental_candidate.update(req.body, {
     where: {
       id: req.params.id,
     },
@@ -69,11 +50,11 @@ const update = async (req) => {
 const destroy = async (req) => {
   await getOne(req);
 
-  const result = await vice_presidental_candidate.delete({
+  const result = await Vice_presidental_candidate.destroy({
     where: { id: req.params.id },
   });
 
   return result;
 };
 
-module.exports = { create, getOne, update, getAll, destroy };
+module.exports = { createData, getOne, update, getAll, destroy };
