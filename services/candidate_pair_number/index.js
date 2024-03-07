@@ -3,12 +3,17 @@ const {
   Presidental_candidate,
   Vice_presidental_candidate,
   Candidate_pair_number,
+  Supporting_party,
 } = require("../../models");
 
 const create = async (req) => {
+  let partyId = [];
+  let candidateId = [];
   const presidentalExist = await Presidental_candidate.findOne({
     where: { id: req.body.presidental_candidate_id },
   });
+
+  partyId.push(presidentalExist.political_party_id);
 
   if (!presidentalExist) {
     throw ApiError.notFound("Data presiden tidak ada!");
@@ -18,11 +23,24 @@ const create = async (req) => {
     where: { id: req.body.vice_presidental_candidate_id },
   });
 
+  partyId.push(vicePresidentalExist.political_party_id);
+
   if (!vicePresidentalExist) {
     throw ApiError.notFound("Data vice presiden tidak ada!");
   }
 
   const result = await Candidate_pair_number.create(req.body);
+
+  candidateId = result.id;
+
+  Promise.all(
+    partyId.map(async (data) => {
+      await Supporting_party.create({
+        candidate_pair_number_id: candidateId,
+        political_party_id: data,
+      });
+    })
+  );
 
   return result;
 };
@@ -31,8 +49,8 @@ const getOne = async (req) => {
   const result = await Candidate_pair_number.findOne({
     where: { id: req.params.id },
     include: [
-      { model: Presidental_candidate, as: "presidental" },
-      { model: Vice_presidental_candidate, as: "vice_presidental" },
+      { model: Presidental_candidate, as: "presidental_candidate" },
+      { model: Vice_presidental_candidate, as: "vice_presidental_candidate" },
     ],
   });
 
@@ -46,9 +64,10 @@ const getOne = async (req) => {
 const getAll = async (req) => {
   const result = await Candidate_pair_number.findAll({
     include: [
-      { model: Presidental_candidate, as: "presidental" },
-      { model: Vice_presidental_candidate, as: "vice_presidental" },
+      { model: Presidental_candidate, as: "presidental_candidate" },
+      { model: Vice_presidental_candidate, as: "vice_presidental_candidate" },
     ],
+    order: [["number", "ASC"]],
   });
 
   return result;
