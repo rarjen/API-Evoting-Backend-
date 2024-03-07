@@ -10,15 +10,6 @@ const createVicePresidentalCandidateValidator = [
     .bail()
     .isString()
     .withMessage("Must be string"),
-  check("presidental_partner_id")
-    .exists()
-    .withMessage("Must have presidental_partner_id")
-    .bail()
-    .notEmpty()
-    .withMessage("Can not be empty")
-    .bail()
-    .isString()
-    .withMessage("Must be string"),
   check("name")
     .exists()
     .withMessage("Must have name")
