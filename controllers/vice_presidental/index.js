@@ -1,5 +1,5 @@
 const {
-  create,
+  createData,
   getOne,
   getAll,
   update,
@@ -9,7 +9,7 @@ const responseHandler = require("../../helpers/responseHandler");
 
 const createVicePresidental = async (req, res, next) => {
   try {
-    const result = await create(req);
+    const result = await createData(req);
 
     return responseHandler.created(
       res,
