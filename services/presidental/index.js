@@ -29,7 +29,9 @@ const getOne = async (req) => {
 };
 
 const getAll = async (req) => {
-  const result = await Presidental_candidate.findAll({});
+  const result = await Presidental_candidate.findAll({
+    include: { model: Political_party, as: "political_party" },
+  });
 
   return result;
 };
