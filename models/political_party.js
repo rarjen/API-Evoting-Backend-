@@ -22,6 +22,13 @@ module.exports = (sequelize, DataTypes) => {
         onDelete: "CASCADE",
         onUpdate: "CASCADE",
       });
+
+      Political_party.hasOne(models.Supporting_party, {
+        foreignKey: "political_party_id",
+        as: "supporting_party",
+        onDelete: "CASCADE",
+        onUpdate: "CASCADE",
+      });
     }
   }
   Political_party.init(
