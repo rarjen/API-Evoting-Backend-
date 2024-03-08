@@ -25,7 +25,6 @@ const authMe = async (req, res, next) => {
   const user = req.user;
   try {
     const result = await whoami(user.id);
-
     return responseHandler.succes(res, "Success", result);
   } catch (error) {
     next(error);
