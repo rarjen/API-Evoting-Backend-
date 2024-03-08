@@ -9,6 +9,20 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+
+      Supporting_party.belongsTo(models.Political_party, {
+        foreignKey: "political_party_id",
+        as: "political_party",
+        onDelete: "CASCADE",
+        onUpdate: "CASCADE",
+      });
+
+      Supporting_party.belongsTo(models.Candidate_pair_number, {
+        foreignKey: "candidate_pair_number_id",
+        as: "number",
+        onDelete: "CASCADE",
+        onUpdate: "CASCADE",
+      });
     }
   }
   Supporting_party.init(
