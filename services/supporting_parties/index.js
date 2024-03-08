@@ -1,13 +1,13 @@
 const ApiError = require("../../helpers/errorHandler");
 const {
-  Policital_party,
+  Political_party,
   Candidate_pair_number,
   Supporting_party,
 } = require("../../models");
 
 const checkPartyId = async (parties) => {
   for (const dataParty of parties) {
-    const partyExist = await Policital_party.findOne({
+    const partyExist = await Political_party.findOne({
       where: {
         id: dataParty,
       },
@@ -47,7 +47,7 @@ const getOne = async (req) => {
   const result = await Supporting_party.findOne({
     where: { id: req.params.id },
     include: [
-      { model: Policital_party, as: "political_party" },
+      { model: Political_party, as: "political_party" },
       { model: Candidate_pair_number, as: "number" },
     ],
   });
@@ -77,7 +77,7 @@ const getAll = async (req) => {
   const result = await Supporting_party.findAll({
     where: whereQuery,
     include: [
-      { model: Policital_party, as: "political_party" },
+      { model: Political_party, as: "political_party" },
       { model: Candidate_pair_number, as: "number" },
     ],
   });
@@ -97,7 +97,7 @@ const update = async (req) => {
     throw ApiError.notFound("Data nomor kandidat tidak ditemukan!");
   }
 
-  const checkParty = await Policital_party.findOne({
+  const checkParty = await Political_party.findOne({
     where: { id: partiesId },
   });
 
