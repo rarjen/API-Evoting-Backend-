@@ -79,9 +79,9 @@ const register = async (req) => {
 };
 
 const login = async (req) => {
-  const { nik, email, password } = req.body;
+  const { nikOrEmailOrPhone, password } = req.body;
 
-  if (!email && !nik) {
+  if (!nikOrEmailOrPhone) {
     throw ApiError.badRequest("Email atau NIK harus diisi");
   }
 
@@ -100,16 +100,11 @@ const login = async (req) => {
     throw ApiError.badRequest("Password minimal 6 karakter");
   }
 
-  let userExist;
-  if (email) {
-    userExist = await User.findOne({
-      where: { email: email },
-    });
-  } else {
-    userExist = await User.findOne({
-      where: { nik: nik },
-    });
-  }
+  const userExist = await User.findOne({
+    where: {
+      [Op.or]: [{ email: nikOrEmailOrPhone }, { nik: nikOrEmailOrPhone }],
+    },
+  });
 
   if (!userExist) {
     throw ApiError.badRequest("Email/NIK tidak ditemukan");
