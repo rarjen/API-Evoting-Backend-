@@ -70,7 +70,17 @@ const getAll = async (req) => {
     order: [["number", "ASC"]],
   });
 
-  return result;
+  const modifiedResults = result.map((result) => ({
+    id: result.id,
+    presidental_candidate_id: result.presidental_candidate_id,
+    vice_presidental_candidate_id: result.vice_presidental_candidate_id,
+    number: result.number,
+    presidental_candidate_name: result.presidental_candidate.name,
+    vice_presidental_candidate_name: result.vice_presidental_candidate.name,
+    img_url: result.img_url,
+  }));
+
+  return modifiedResults;
 };
 
 const update = async (req) => {
