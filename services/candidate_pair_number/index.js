@@ -1,9 +1,11 @@
 const ApiError = require("../../helpers/errorHandler");
+
 const {
   Presidental_candidate,
   Vice_presidental_candidate,
   Candidate_pair_number,
   Supporting_party,
+  Voting_result,
 } = require("../../models");
 
 const create = async (req) => {
@@ -39,7 +41,9 @@ const create = async (req) => {
         candidate_pair_number_id: candidateId,
         political_party_id: data,
       });
-    })
+    }),
+
+    await Voting_result.create({ candidate_pair_number_id: result.id })
   );
 
   return result;
