@@ -29,6 +29,13 @@ module.exports = (sequelize, DataTypes) => {
         onDelete: "CASCADE",
         onUpdate: "CASCADE",
       });
+
+      Candidate_pair_number.hasOne(models.Voting_result, {
+        foreignKey: "candidate_pair_number_id",
+        as: "voting_result",
+        onDelete: "CASCADE",
+        onUpdate: "CASCADE",
+      });
     }
   }
   Candidate_pair_number.init(
