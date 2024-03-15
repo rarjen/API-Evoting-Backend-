@@ -8,7 +8,12 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      // define association here
+      Voting_result.belongsTo(models.Candidate_pair_number, {
+        foreignKey: "candidate_pair_number_id",
+        as: "number",
+        onDelete: "CASCADE",
+        onUpdate: "CASCADE",
+      });
     }
   }
   Voting_result.init(
