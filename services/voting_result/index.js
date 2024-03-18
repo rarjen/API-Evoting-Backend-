@@ -24,6 +24,7 @@ const create = async (req) => {
 };
 
 const getAll = async (req) => {
+  const arrayResponse = [];
   const result = await Voting_result.findAll({
     include: {
       model: Candidate_pair_number,
@@ -36,7 +37,9 @@ const getAll = async (req) => {
     order: [["total_vote", "ASC"]],
   });
 
-  const modifiedResults = result.map((result) => ({
+  arrayResponse.push(result);
+
+  const modifiedResults = arrayResponse.map((result) => ({
     id: result.id,
     candidate_pair_number_id: result.candidate_pair_number_id,
     total_vote: result.total_vote,
