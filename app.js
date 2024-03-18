@@ -4,11 +4,10 @@ const morgan = require("morgan");
 const router = require("./routes");
 const bodyParser = require("body-parser");
 const cors = require("cors");
-const fs = require("fs");
-const path = require("path");
-
 const ApiError = require("./helpers/errorHandler");
-const responseHandler = require("./helpers/responseHandler");
+const http = require("http");
+const socketIo = require("socket.io");
+
 const { PORT } = process.env;
 
 const app = express();
@@ -52,12 +51,28 @@ app.use((error, req, res, next) => {
   return res.status(error.status || error.code || 500).send(error);
 });
 
-app
-  .listen(PORT, () => console.log(`Listening on port ${PORT}`))
-  .on("error", (err) => {
-    if (err.code === "EADDRINUSE") {
-      console.error(`Failed to start server, port ${PORT} already in use`);
-    } else {
-      console.error(err);
+const server = http.createServer(app);
+const io = socketIo(server);
+
+io.on("connection", (socket) => {
+  console.log("New client connected");
+  const { Voting_result } = require("./models");
+
+  socket.on("LOAD_RESULT", async () => {
+    try {
+      const result = await Voting_result.findAll({});
+      io.emit("READ_RESULT", result);
+    } catch (err) {
+      console.error("Error loading result:", err);
     }
   });
+
+  // Handle disconnect event
+  socket.on("disconnect", () => {
+    console.log("Client disconnected");
+  });
+});
+
+server.listen(PORT, () => {
+  console.log(`Listening on port ${PORT}`);
+});
