@@ -18,10 +18,37 @@ const create = async (req) => {
     const result = await Voting_log.create(
       {
         encrypted_user_id: encrypt(user.id),
-        encrypted_candidate_number_id: encrypt(req.body.candidate_number_id),
+        encrypted_candidate_number_id: req.body.candidate_number_id,
       },
       { transaction }
     );
+
+    await Voting_result.increment("total_vote", {
+      by: 1,
+      where: {
+        candidate_pair_number_id: decrypt(req.body.candidate_number_id),
+      },
+      transaction,
+    });
+
+    // Get total votes for all candidates
+    const totalVotes = await Voting_result.sum("total_vote", {
+      where: {},
+      transaction,
+    });
+
+    // Calculate percentage for each candidate
+    const results = await Voting_result.findAll({
+      where: {},
+      transaction,
+    });
+
+    for (let i = 0; i < results.length; i++) {
+      const result = results[i];
+      const percentage = (result.total_vote / totalVotes) * 100;
+
+      await result.update({ percentage }, { transaction });
+    }
 
     await User.update({ isVoted: 1 }, { where: { id: user.id }, transaction });
 
@@ -35,14 +62,6 @@ const create = async (req) => {
 
 const getAll = async (req) => {
   const result = await Voting_log.findAll({});
-
-  // const finalResult = result.map((data) => {
-  //   return {
-  //     user_id: decrypt(data.encrypted_user_id),
-  //     candidate_number_id: decrypt(data.encrypted_candidate_number_id),
-  //   };
-  // });
-
   return result;
 };
 
