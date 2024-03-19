@@ -12,29 +12,31 @@ const { PORT } = process.env;
 
 const app = express();
 
-app.use(
-  morgan((tokens, req, res) => {
-    return [
-      tokens.method(req, res),
-      tokens.url(req, res),
-      tokens.status(req, res),
-      tokens["remote-addr"](req, res),
-      tokens["remote-user"](req, res),
-      tokens["user-agent"](req, res),
-      tokens.res(req, res, "content-length"),
-      "-",
-      JSON.stringify(req.headers),
-      JSON.stringify(req.body),
-      JSON.stringify(req.query),
-      JSON.stringify(req.params),
-      JSON.stringify(req.cookies),
-      JSON.stringify(req.signedCookies),
-      new Date().toLocaleString("id-ID", { timeZone: "Asia/Jakarta" }),
-      tokens["response-time"](req, res),
-      "ms",
-    ].join(" ");
-  })
-);
+// app.use(
+//   morgan((tokens, req, res) => {
+//     return [
+//       tokens.method(req, res),
+//       tokens.url(req, res),
+//       tokens.status(req, res),
+//       tokens["remote-addr"](req, res),
+//       tokens["remote-user"](req, res),
+//       tokens["user-agent"](req, res),
+//       tokens.res(req, res, "content-length"),
+//       "-",
+//       JSON.stringify(req.headers),
+//       JSON.stringify(req.body),
+//       JSON.stringify(req.query),
+//       JSON.stringify(req.params),
+//       JSON.stringify(req.cookies),
+//       JSON.stringify(req.signedCookies),
+//       new Date().toLocaleString("id-ID", { timeZone: "Asia/Jakarta" }),
+//       tokens["response-time"](req, res),
+//       "ms",
+//     ].join(" ");
+//   })
+// );
+
+app.use(morgan("dev")); // for logging
 
 app.use(express.json()); // read body type json
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -55,16 +57,19 @@ const server = http.createServer(app);
 const io = socketIo(server);
 
 io.on("connection", (socket) => {
-  console.log("New client connected");
   const { Voting_result } = require("./models");
 
-  socket.on("LOAD_RESULT", async () => {
-    try {
-      const result = await Voting_result.findAll({});
-      io.emit("READ_RESULT", result);
-    } catch (err) {
-      console.error("Error loading result:", err);
-    }
+  console.log("New socket connection: " + socket.id);
+
+  socket.on("data_result", async () => {
+    const result = await Voting_result.findAll({});
+
+    io.emit("data_result", result);
+  });
+
+  socket.on("new_vote", (candidateId) => {
+    console.log("Vote masuk!");
+    io.emit("new_vote", candidateId);
   });
 
   // Handle disconnect event
