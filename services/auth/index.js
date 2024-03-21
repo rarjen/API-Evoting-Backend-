@@ -135,4 +135,33 @@ const whoami = async (user_id) => {
   return result;
 };
 
-module.exports = { register, login, whoami };
+const resetPassword = async (req) => {
+  const { oldPassword, newPassword, confirmPassword } = req.body;
+  const user = req.user;
+
+  if (newPassword !== confirmPassword) {
+    throw ApiError.badRequest("Password tidak sama!");
+  }
+
+  const checkExist = await User.findOne({ where: { id: user.id } });
+
+  if (!checkExist) {
+    throw ApiError.notFound("User tidak ditemukan!");
+  }
+
+  const match = checkHash(oldPassword, checkExist.password);
+  if (!match) {
+    throw ApiError.badRequest("Password lama salah");
+  }
+
+  const passwordHashed = getHash(confirmPassword);
+
+  const result = await User.update(
+    { password: passwordHashed },
+    { where: { id: user.id } }
+  );
+
+  return result;
+};
+
+module.exports = { register, login, whoami, resetPassword };
