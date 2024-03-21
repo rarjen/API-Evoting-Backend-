@@ -1,4 +1,9 @@
-const { register, login, whoami } = require("../../services/auth");
+const {
+  register,
+  login,
+  whoami,
+  resetPassword,
+} = require("../../services/auth");
 const responseHandler = require("../../helpers/responseHandler");
 
 const registerAccount = async (req, res, next) => {
@@ -31,8 +36,18 @@ const authMe = async (req, res, next) => {
   }
 };
 
+const resetPasswordUser = async (req, res, next) => {
+  try {
+    const result = await resetPassword(req);
+    return responseHandler.succes(res, "Success", result);
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   registerAccount,
   loginAccount,
   authMe,
+  resetPasswordUser,
 };
