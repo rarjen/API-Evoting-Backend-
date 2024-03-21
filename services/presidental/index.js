@@ -33,7 +33,13 @@ const getAll = async (req) => {
     include: { model: Political_party, as: "political_party" },
   });
 
-  return result;
+  const modifiedResults = result.map((data) => ({
+    id: data.id,
+    name: data.name,
+    imgUrl: data.img_url,
+  }));
+
+  return modifiedResults;
 };
 
 const update = async (req) => {
