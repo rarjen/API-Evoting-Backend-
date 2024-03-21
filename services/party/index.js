@@ -28,9 +28,14 @@ const getOne = async (req) => {
 const getAll = async (req) => {
   const result = await Political_party.findAll({});
 
-  console.log(result);
+  const modifiedResults = result.map((data) => ({
+    id: data.id,
+    namaPartai: data.name,
+    abbreviation: data.abbreviation,
+    imgUrl: data.img_url,
+  }));
 
-  return result;
+  return modifiedResults;
 };
 
 const update = async (req) => {
