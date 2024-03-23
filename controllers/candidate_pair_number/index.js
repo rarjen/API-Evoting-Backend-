@@ -29,7 +29,7 @@ const getNumber = async (req, res, next) => {
 
 const getNumbers = async (req, res, next) => {
   try {
-    const result = await getAll();
+    const result = await getAll(req);
 
     return responseHandler.succes(res, "Success get numbers!", result);
   } catch (error) {
