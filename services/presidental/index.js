@@ -29,9 +29,7 @@ const getOne = async (req) => {
 };
 
 const getAll = async (req) => {
-  const result = await Presidental_candidate.findAll({
-    include: { model: Political_party, as: "political_party" },
-  });
+  const result = await Presidental_candidate.findAll({});
 
   const modifiedResults = result.map((data) => ({
     id: data.id,
