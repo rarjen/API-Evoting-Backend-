@@ -28,11 +28,15 @@ const getOne = async (req) => {
 };
 
 const getAll = async (req) => {
-  const result = await Vice_presidental_candidate.findAll({
-    include: { model: Political_party, as: "political_party" },
-  });
+  const result = await Vice_presidental_candidate.findAll({});
 
-  return result;
+  const modifiedResults = result.map((data) => ({
+    id: data.id,
+    name: data.name,
+    imgUrl: data.img_url,
+  }));
+
+  return modifiedResults;
 };
 
 const update = async (req) => {
