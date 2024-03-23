@@ -81,6 +81,7 @@ const getAll = async (req) => {
       { model: Presidental_candidate, as: "presidental_candidate" },
       { model: Vice_presidental_candidate, as: "vice_presidental_candidate" },
     ],
+    where: { number: req.query.number },
     order: [["number", "ASC"]],
   });
 
