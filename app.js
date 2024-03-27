@@ -12,9 +12,9 @@ const { PORT } = process.env;
 const app = express();
 const server = http.createServer(app);
 
-app.use(morgan("dev")); // for logging
+app.use(morgan("dev"));
 
-app.use(express.json()); // read body type json
+app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cors());
 
