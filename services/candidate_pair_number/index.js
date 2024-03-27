@@ -6,6 +6,8 @@ const {
   Candidate_pair_number,
   Supporting_party,
   Voting_result,
+  Candidate_mission,
+  Political_party,
 } = require("../../models");
 
 const create = async (req) => {
@@ -50,17 +52,37 @@ const create = async (req) => {
 };
 
 const getOne = async (req) => {
+  let arrayMissions = [];
+  let arrayImgParties = [];
   const result = await Candidate_pair_number.findOne({
     where: { id: req.params.id },
     include: [
       { model: Presidental_candidate, as: "presidental_candidate" },
       { model: Vice_presidental_candidate, as: "vice_presidental_candidate" },
+      {
+        model: Candidate_mission,
+        as: "candidate_mission",
+        order: [["id", "ASC"]],
+      },
     ],
+  });
+
+  const getImgUrlParties = await Supporting_party.findAll({
+    where: { candidate_pair_number_id: req.params.id },
+    include: { model: Political_party, as: "political_party" },
   });
 
   if (!result) {
     throw ApiError.notFound("Data tidak ada!");
   }
+
+  getImgUrlParties.map((data) => {
+    arrayImgParties.push(data.political_party.img_url);
+  });
+
+  result.candidate_mission.map((data) => {
+    arrayMissions.push(data.mission);
+  });
 
   const modifiedResult = {
     id: result.id,
@@ -70,6 +92,9 @@ const getOne = async (req) => {
     presidental_candidate_name: result.presidental_candidate.name,
     vice_presidental_candidate_name: result.vice_presidental_candidate.name,
     img_url: result.img_url,
+    vision: result.visi,
+    mission: arrayMissions,
+    supportingParties: arrayImgParties,
   };
 
   return modifiedResult;
