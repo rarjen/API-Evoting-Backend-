@@ -25,7 +25,18 @@ const getOne = async (req) => {
     throw ApiError.notFound("Data tidak ada!");
   }
 
-  return result;
+  const modifiedResult = {
+    id: result.id,
+    name: result.name,
+    age: result.age,
+    description: result.description,
+    dob: result.dob,
+    imgUrl: result.img_url,
+    partyImg: result.political_party.img_url,
+    namaPartai: result.political_party.abbreviation,
+  };
+
+  return modifiedResult;
 };
 
 const getAll = async (req) => {
