@@ -36,6 +36,13 @@ module.exports = (sequelize, DataTypes) => {
         onDelete: "CASCADE",
         onUpdate: "CASCADE",
       });
+
+      Candidate_pair_number.hasMany(models.Candidate_mission, {
+        foreignKey: "candidate_id",
+        as: "candidate_mission",
+        onDelete: "CASCADE",
+        onUpdate: "CASCADE",
+      });
     }
   }
   Candidate_pair_number.init(
@@ -50,6 +57,7 @@ module.exports = (sequelize, DataTypes) => {
       vice_presidental_candidate_id: DataTypes.STRING,
       number: DataTypes.INTEGER,
       img_url: DataTypes.STRING,
+      visi: DataTypes.TEXT,
     },
     {
       sequelize,
