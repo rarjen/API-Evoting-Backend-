@@ -101,12 +101,20 @@ const getOne = async (req) => {
 };
 
 const getAll = async (req) => {
+  let querySearch = {};
+
+  if (req.query.number) {
+    querySearch = {
+      number: req.query.number,
+    };
+  }
+
   const result = await Candidate_pair_number.findAll({
     include: [
       { model: Presidental_candidate, as: "presidental_candidate" },
       { model: Vice_presidental_candidate, as: "vice_presidental_candidate" },
     ],
-    where: { number: req.query.number },
+    where: querySearch,
     order: [["number", "ASC"]],
   });
 
